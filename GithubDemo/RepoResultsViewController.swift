@@ -10,8 +10,9 @@ import UIKit
 import MBProgressHUD
 
 // Main ViewController
-class RepoResultsViewController: UIViewController {
+class RepoResultsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var tableView: UITableView!
     var searchBar: UISearchBar!
     var searchSettings = GithubRepoSearchSettings()
 
@@ -19,6 +20,10 @@ class RepoResultsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.estimatedRowHeight = 120
+        tableView.rowHeight = UITableViewAutomaticDimension
 
         // Initialize the UISearchBar
         searchBar = UISearchBar()
@@ -43,14 +48,43 @@ class RepoResultsViewController: UIViewController {
             // Print the returned repositories to the output window
             for repo in newRepos {
                 print(repo)
-            }   
-
+                
+            }
+            self.repos = newRepos
+            self.tableView.reloadData()
             MBProgressHUD.hide(for: self.view, animated: true)
             }, error: { (error) -> Void in
                 print(error)
         })
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if repos != nil {
+            return repos.count
+        }else{
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GitTableCell", for: indexPath) as! GitTableCell
+        let repo = repos[indexPath.row]
+        let imageUrl = NSURL(string: repo.ownerAvatarURL!)
+        cell.avatar.setImageWith(imageUrl as URL!)
+        cell.Forks.text = "\(repo.forks!)"
+        cell.Decription.text = repo.repoDescription
+        cell.Stars.text = "\(repo.stars!)"
+        cell.Name.text = repo.name
+        cell.Owner.text = "by " + repo.ownerHandle!
+        
+        return cell
+    }
 }
+
+
+
+
+
 
 // SearchBar methods
 extension RepoResultsViewController: UISearchBarDelegate {
