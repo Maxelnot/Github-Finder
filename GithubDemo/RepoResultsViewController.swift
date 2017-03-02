@@ -10,7 +10,7 @@ import UIKit
 import MBProgressHUD
 
 // Main ViewController
-class RepoResultsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class RepoResultsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,SettingsPresentingViewControllerDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     var searchBar: UISearchBar!
@@ -35,6 +35,12 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource, UITabl
 
         // Perform the first search when the view controller first loads
         doSearch()
+    }
+    
+    func didSaveSettings(settings: GithubRepoSearchSettings) {
+    }
+    
+    func didCancelSettings() {
     }
 
     // Perform the search.
@@ -79,12 +85,13 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource, UITabl
         
         return cell
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navController = segue.destination as! UINavigationController
+        let vc = navController.topViewController as! SettingsViewController
+        //vc.settings =   // ... Search Settings ...
+        vc.delegate = self
+    }
 }
-
-
-
-
-
 
 // SearchBar methods
 extension RepoResultsViewController: UISearchBarDelegate {
