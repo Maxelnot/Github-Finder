@@ -38,6 +38,8 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func didSaveSettings(settings: GithubRepoSearchSettings) {
+        self.searchSettings.minStars = settings.minStars
+        doSearch()
     }
     
     func didCancelSettings() {
@@ -88,7 +90,7 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource, UITabl
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navController = segue.destination as! UINavigationController
         let vc = navController.topViewController as! SettingsViewController
-        //vc.settings =   // ... Search Settings ...
+        vc.settings = self.searchSettings
         vc.delegate = self
     }
 }

@@ -11,11 +11,21 @@ import UIKit
 class SettingsViewController: UIViewController {
     
     weak var delegate: SettingsPresentingViewControllerDelegate?
+    
+    @IBOutlet weak var minStarLabel: UILabel!
+    @IBOutlet weak var sliderValue: UISlider!
+    var settings: GithubRepoSearchSettings?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        let starValue = ((self.settings?.minStars)!)
+        self.sliderValue.setValue(Float(starValue), animated: true)
+        minStarLabel.text = "\(starValue)"
+        
         // Do any additional setup after loading the view.
+    }
+    @IBAction func sliderMoved(_ sender: UISlider) {
+        minStarLabel.text = "\(Int(sender.value))"
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,7 +34,9 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func saveButton(_ sender: Any) {
-     //   self.delegate?.didSaveSettings(settings)
+        self.settings?.minStars = Int(self.sliderValue.value)
+        print(self.sliderValue.value)
+        self.delegate?.didSaveSettings(settings: self.settings!)
         dismiss(animated: true, completion: nil)
     }
     @IBAction func backButton(_ sender: Any) {
